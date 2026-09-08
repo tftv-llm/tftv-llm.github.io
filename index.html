@@ -3,82 +3,294 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="TFTV — Training-Free Task Vectors for LLM Behavioral Control">
-  <meta name="theme-color" content="#080d18">
-  <title>TFTV — Coming Soon</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #080d18;
-      color: #f3f7ff;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      min-height: 100vh;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 2rem;
-      background:
-        radial-gradient(circle at 50% 25%, rgba(70, 119, 255, 0.18), transparent 36rem),
-        #080d18;
-    }
-
-    main { max-width: 760px; text-align: center; }
-
-    .label {
-      margin-bottom: 1.5rem;
-      color: #70e2d0;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(4rem, 15vw, 8rem);
-      line-height: 0.9;
-      letter-spacing: -0.08em;
-    }
-
-    p {
-      max-width: 610px;
-      margin: 2rem auto 0;
-      color: #aebbd0;
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      line-height: 1.7;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.65rem;
-      margin-top: 2.5rem;
-      padding: 0.65rem 0.9rem;
-      border: 1px solid #26334a;
-      color: #cad5e7;
-      font-size: 0.85rem;
-    }
-
-    .dot {
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 50%;
-      background: #70e2d0;
-      box-shadow: 0 0 1rem rgba(112, 226, 208, 0.8);
-    }
-  </style>
+  <meta name="description" content="Training-Free Task Vectors for LLM Behavioral Control. Persistent, compositional weight-space editing without fine-tuning.">
+  <title>TFTV — Training-Free Task Vectors</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <div class="label">Training-Free Task Vectors</div>
-    <h1>TFTV</h1>
-    <p>A training-free framework for translating activation-space steering signals into persistent parameter-space model edits.</p>
-    <div class="status"><span class="dot" aria-hidden="true"></span> Website under construction</div>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="wordmark" href="#top">TFTV</a>
+      <nav aria-label="Primary navigation">
+        <a href="#overview">Overview</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="TODO">Paper</a>
+        <a href="https://github.com/gabjp/training-free-task-vectors" target="_blank" rel="noreferrer">Code</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="wrap">
+    <section class="hero">
+      <h1>Training-Free Task Vectors for<br>LLM Behavioral Control</h1>
+
+      <div class="authors" aria-label="Authors and affiliations">
+        <div class="author">
+          <span class="author-name">Gabriel J. Perin</span>
+          <span class="author-affiliation">University of São Paulo</span>
+        </div>
+        <div class="author">
+          <span class="author-name">Lucas Boscaini</span>
+          <span class="author-affiliation">Google</span>
+        </div>
+        <div class="author">
+          <span class="author-name">André Araujo</span>
+          <span class="author-affiliation">Google DeepMind</span>
+        </div>
+        <div class="author">
+          <span class="author-name">Nina S. T. Hirata</span>
+          <span class="author-affiliation">University of São Paulo</span>
+        </div>
+      </div>
+
+      <div class="links">
+        <a class="button primary" href="TODO">Paper</a>
+        <a class="button" href="https://github.com/gabjp/training-free-task-vectors" target="_blank" rel="noreferrer">Code</a>
+      </div>
+    </section>
+
+    <figure class="figure teaser">
+      <img src="figs/teaser-1.png" alt="Comparison between conventional task vectors and Training-Free Task Vectors.">
+      <figcaption>
+        Unlike classical task vectors, TFTVs require only forward-pass statistics and directly support addition, subtraction, and composition in weight space.
+      </figcaption>
+    </figure>
+
+    <section class="section" id="overview">
+      <h2>Overview</h2>
+      <p class="lede">
+        Task vectors are semantically meaningful directions in parameter space, but they are usually obtained by subtracting a pretrained model from a fine-tuned checkpoint. For behavioral control, this means that discovering a new direction typically requires first training a model that already expresses the target behavior.
+      </p>
+      <p>
+        <strong>Training-Free Task Vectors (TFTVs)</strong> remove that requirement. TFTV maps activation steering directions associated with behavioral traits into rank-one weight-space updates using only forward-pass statistics. The resulting edits are persistent: they modify the model weights rather than intervening during every forward pass.
+      </p>
+      <p>
+        We study TFTVs for <strong>LLM behavioral control</strong>, focusing on whether these directions support <strong>learning via addition</strong>, <strong>forgetting via subtraction</strong>, and <strong>composition of multiple traits</strong>. Across the main paper and appendix, we evaluate four recent instruction-tuned models and five behavioral traits.
+      </p>
+
+      <div class="key-points" aria-label="Main properties of TFTV">
+        <div><strong>Training-free</strong><span>No auxiliary fine-tuning or optimization.</span></div>
+        <div><strong>Persistent</strong><span>Edits live directly in model weights.</span></div>
+        <div><strong>Compositional</strong><span>Directions can be added, subtracted, and combined.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <h2>Method</h2>
+      <p>
+        TFTV starts from contrastive prompts that elicit or suppress a target behavior. After generating and filtering completions, we compute the difference between positive and negative mean activations to obtain a steering direction. We then combine the normalized steering vector with the expected module input and the SVD of the corresponding weight matrix to construct a rank-one update.
+      </p>
+
+      <figure class="figure">
+        <img src="figs/method.png" alt="TFTV pipeline from contrastive prompts to a rank-one weight-space direction.">
+        <figcaption>
+          TFTV construction. A contrastive activation direction is mapped into a rank-one parameter-space update using the module's expected input and weight SVD.
+        </figcaption>
+      </figure>
+
+    <div class="method-properties">
+      <p>
+        <strong>Theoretical properties.</strong>
+        The TFTV construction satisfies three properties that motivate its use for behavioral task-vector arithmetic:
+      </p>
+
+      <p>
+        <strong>Norm matching.</strong>
+        Each TFTV update has the same Frobenius norm as the corresponding weight matrix. This makes the edit scale naturally across layers, with a single coefficient controlling its relative magnitude.
+      </p>
+
+      <p>
+        <strong>Steering.</strong>
+        For the expected module input, the induced weight change moves the module output in the desired steering direction, aligning the parameter update with the target behavior.
+      </p>
+
+      <p>
+        <strong>Linearity.</strong>
+        TFTV preserves linear arithmetic over steering directions. This provides the theoretical basis for learning via addition, forgetting via subtraction, and composing multiple behavioral edits.
+      </p>
+    </div>
+    </section>
+
+<section class="section" id="results">
+  <h2>Results</h2>
+
+  <p>
+    We evaluate TFTV for behavioral control across evil, hallucinating, and sycophantic traits, measuring both trait manifestation and preservation of general model utility. The plots below show results for Llama-3.1-8B-Instruct, where utility is the average of MMLU and GSM8K after normalizing each score by the corresponding base-model performance.
+  </p>
+
+  <h3>Learning via addition</h3>
+
+  <p>
+    Adding a TFTV amplifies the target behavior while largely preserving general utility.
+
+  <div class="results-grid">
+    <figure class="figure">
+      <img
+        src="figs/llama_addition_evil_reference_style.png"
+        alt="Llama 3.1 addition results for the evil trait."
+      >
+      <figcaption>Evil — addition</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img
+        src="figs/llama_addition_hallucinating_reference_style.png"
+        alt="Llama 3.1 addition results for the hallucinating trait."
+      >
+      <figcaption>Hallucination — addition</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img
+        src="figs/llama_addition_sycophantic_reference_style.png"
+        alt="Llama 3.1 addition results for the sycophantic trait."
+      >
+      <figcaption>Sycophancy — addition</figcaption>
+    </figure>
+  </div>
+
+  <h3>Forgetting via subtraction</h3>
+
+  <p>
+    Negating the same TFTV directions suppresses the corresponding behaviors while preserving utility. 
+  </p>
+
+  <div class="results-grid">
+    <figure class="figure">
+      <img
+        src="figs/llama_negation_evil_reference_style.png"
+        alt="Llama 3.1 negation results for the evil trait."
+      >
+      <figcaption>Evil — negation</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img
+        src="figs/llama_negation_hallucinating_reference_style.png"
+        alt="Llama 3.1 negation results for the hallucinating trait."
+      >
+      <figcaption>Hallucination — negation</figcaption>
+    </figure>
+
+    <figure class="figure">
+      <img
+        src="figs/llama_negation_sycophantic_reference_style.png"
+        alt="Llama 3.1 negation results for the sycophantic trait."
+      >
+      <figcaption>Sycophancy — negation</figcaption>
+    </figure>
+  </div>
+</section>
+
+
+  <h3>Composing multiple traits</h3>
+
+  <p>
+    TFTV edits can also be summed to jointly control multiple behaviors. On Llama 3.1, the three-way evil + hallucination + sycophancy suppression edit reduces all three trait scores to near zero while keeping MMLU close to the base model and improving GSM8K. Compared with competing methods, TFTV provides a particularly strong suppression–utility trade-off under the composed edit.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <caption>
+        Llama 3.1: three-way evil + hallucination + sycophancy suppression.
+        † Methods requiring fine-tuning.
+      </caption>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Evil ↓</th>
+          <th>Hall. ↓</th>
+          <th>Syc. ↓</th>
+          <th>MMLU ↑</th>
+          <th>GSM8K ↑</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Base</td>
+          <td>95.42</td>
+          <td>97.53</td>
+          <td>92.06</td>
+          <td>68.26</td>
+          <td>77.10</td>
+        </tr>
+
+        <tr>
+          <td>Steering</td>
+          <td>17.05</td>
+          <td>56.22</td>
+          <td>28.34</td>
+          <td>67.04</td>
+          <td>55.04</td>
+        </tr>
+
+        <tr>
+          <td>Steer2Edit</td>
+          <td>0.51</td>
+          <td>12.46</td>
+          <td>2.11</td>
+          <td>39.32</td>
+          <td>32.30</td>
+        </tr>
+
+        <tr>
+          <td><strong>TFTV</strong></td>
+          <td><strong>0.03</strong></td>
+          <td><strong>1.54</strong></td>
+          <td><strong>1.94</strong></td>
+          <td><strong>68.36</strong></td>
+          <td><strong>79.15</strong></td>
+        </tr>
+
+        <tr>
+          <td>Task Vectors†</td>
+          <td>0.25</td>
+          <td>44.71</td>
+          <td>6.16</td>
+          <td>59.62</td>
+          <td>32.90</td>
+        </tr>
+
+        <tr>
+          <td>CWS†</td>
+          <td>0.00</td>
+          <td>5.55</td>
+          <td>5.50</td>
+          <td>61.39</td>
+          <td>1.52</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="figure qualitative">
+    <img
+      src="figs/qualitative-results.png"
+      alt="Qualitative examples of progressively composed TFTV suppression edits for evil, hallucination, and sycophancy."
+    >
+    <figcaption>
+      Qualitative examples under progressively composed TFTV edits: base, evil suppression, evil + hallucination suppression, and evil + hallucination + sycophancy suppression.
+    </figcaption>
+  </figure>
+
+</section>
+
+    <section class="section" id="citation">
+      <h2>Citation</h2>
+      <pre><code>TODO
+</code></pre>
+    </section>
   </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>Training-Free Task Vectors</span>
+      <span>
+        <a href="TODO">Paper</a>
+        <a href="https://github.com/gabjp/training-free-task-vectors" target="_blank" rel="noreferrer">Code</a>
+      </span>
+    </div>
+  </footer>
 </body>
 </html>

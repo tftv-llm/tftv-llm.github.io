@@ -1,0 +1,19 @@
+Trait,Method,Trait Score,MMLU,GSM8K
+Evil,Base,0.0,68.26,77.1
+Evil,Steering,14.06,67.29,75.82
+Evil,Steer2Edit,26.69,63.48,74.91
+Evil,TFTV,63.26,68.27,76.42
+Evil,Task Vectors,95.62,65.21,59.97
+Evil,CWS,90.67,67.75,74.45
+Hallucinating,Base,17.03,68.26,77.1
+Hallucinating,Steering,61.51,67.41,73.09
+Hallucinating,Steer2Edit,89.25,63.99,76.27
+Hallucinating,TFTV,98.55,68.11,73.39
+Hallucinating,Task Vectors,94.54,65.75,76.42
+Hallucinating,CWS,99.09,63.26,36.09
+Sycophantic,Base,3.6,68.26,77.1
+Sycophantic,Steering,63.86,67.29,75.44
+Sycophantic,Steer2Edit,81.44,63.4,73.77
+Sycophantic,TFTV,94.64,68.21,74.53
+Sycophantic,Task Vectors,89.55,65.88,75.97
+Sycophantic,CWS,87.13,67.87,77.41
