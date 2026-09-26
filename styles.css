@@ -75,6 +75,13 @@ a:hover {
   text-align: center;
 }
 
+.venue {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
 .hero h1 {
   margin: 0;
   font-size: clamp(2.4rem, 6vw, 4rem);
